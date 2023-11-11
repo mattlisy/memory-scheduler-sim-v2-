@@ -4,13 +4,23 @@ Kyle Taticek 101193550
 
 assumptions: 
 	
-	- interrupt is not needed for this sim
 	
-	- terminate has priority over event 
-
 	- admit has priority over event completion	
 
+
+TODO:
+	* PART 1 *
+
+	- implement FCFS non-preemption test with 
+	- implement external priorities no premption scheduler 
+	- implement round robin with 1s timeout 
+
+	* PART 2 *
+	- add memory dependencies 1GB with 4 partitions -> partition will vary in size 
+
 */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,9 +32,15 @@ assumptions:
 #define BUFFER_SIZE 64 		// buffer to read file
 #define START_TIME 0 		// sim start time
 #define NO_PROCESS (Process){-1, -1, -1, -1, -1, -1, -1}  // represents a process that does not exist
-#define INTERRUPT_FREQ 50 	// interrupt happens every 50ms
 
+enum modes {
+	FCFS,
+	EX,
+	RR,
+	MM
+};
 
+int mode = FCFS; // default mode = FCFS  
 int timer = START_TIME;
 int processes = 0;
 
@@ -224,21 +240,45 @@ int main(int agrc, char* agrv[]) {
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
 
-	// cli flags
+	// commands
 	if (agrc < 2) {
 		perror("error no commands supplied");
 		return EXIT_FAILURE;
 	}	
 
+	// setting flags 	
 	for (int i = 1; i < agrc; i++) { 
 		if ((strcmp(agrv[i], "-h") == 0) || (strcmp(agrv[i], "--help") == 0)) {
+
 			help();
-		} else if ((strcmp(agrv[i], "-i") == 0) || (strcmp(agrv[i],"--input") == 0)) {
+
+		} else if ((strcmp(agrv[i], "-i") == 0) || (strcmp(agrv[i],"--input") == 0)) {  // -i for input file
+
 			new_list = input(&agrv[++i]);
+
+		} else if ((strcmp(agrv[i], "-F") == 0) || (strcmp(agrv[i],"--FCFS") == 0)) { // -F for FCFS schduler
+
+			mode = FCFS;
+
+		} else if ((strcmp(agrv[i], "-E") == 0) || (strcmp(agrv[i],"--EXTERNAL") == 0)) { // -F for FCFS schduler
+			
+			mode = EX;			
+	
+		} else if ((strcmp(agrv[i], "-R") == 0) || (strcmp(agrv[i],"--ROUND_ROBIN") == 0)) { // -F for FCFS schduler
+											      
+			mode = RR; 
+											   
+		} else if ((strcmp(agrv[i], "-M") == 0) || (strcmp(agrv[i],"--MEMORY_MANGEMENT") == 0)) { // -F for FCFS schduler
+											      				
+			mode = MM;
+
 		} else {
+
 			printf("%s is not a command", agrv[i]);
+
 		}		
 	}
+	
 	
 	// sim loop	
 	while(processes){
