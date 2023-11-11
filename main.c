@@ -11,7 +11,7 @@ assumptions:
 TODO:
 	* PART 1 *
 
-	- implement FCFS non-preemption test with 
+	x implement FCFS non-preemption test with 
 	- implement external priorities no premption scheduler 
 	- implement round robin with 1s timeout 
 
@@ -34,19 +34,32 @@ TODO:
 #define NO_PROCESS (Process){-1, -1, -1, -1, -1, -1, -1}  // represents a process that does not exist
 
 enum modes {
-	FCFS,
+	FS,
 	EX,
 	RR,
 	MM
 };
 
-int mode = FCFS; // default mode = FCFS  
+int mode = FS; // default mode = FCFS  
 int timer = START_TIME;
 int processes = 0;
 
-void help(void) { 
+/*
+CLI FLAGS 
 
-	printf("commands: -i \"file.csv\" / --input \"file.csv\"\n");
+-i --input : input file
+-F --FCFS : FCFS schduler
+-E --EXTERNAL : External scheduler
+-R -ROUND_ROBIN : RR schduler
+-M --MEMORY_MANGEMENT : FCFS scheduler with memory  
+*/
+void help(void) { 
+	
+	printf("commands:\n\t-i / --input \"file.csv : file input in csv format\"\n");
+	printf("\t-F / --FCFS : use FCFS scheduler\n");
+	printf("\t-E / --EXTERNAL : use External scheduler\n");
+	printf("\t-R / --ROUND_ROBIN : use RR scheduler\n");
+	printf("\t-M / --MEMORY_MANGEMENT int int int int : implements memory in FCFS scheduler\n");  
 	
 }
 /*
@@ -230,55 +243,11 @@ void event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	return;
 } 
 
+void FCFS(Linked_list* new_list) {
 
-
-int main(int agrc, char* agrv[]) {
-	
-	//data structures 	
-	Linked_list new_list;	
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
-
-	// commands
-	if (agrc < 2) {
-		perror("error no commands supplied");
-		return EXIT_FAILURE;
-	}	
-
-	// setting flags 	
-	for (int i = 1; i < agrc; i++) { 
-		if ((strcmp(agrv[i], "-h") == 0) || (strcmp(agrv[i], "--help") == 0)) {
-
-			help();
-
-		} else if ((strcmp(agrv[i], "-i") == 0) || (strcmp(agrv[i],"--input") == 0)) {  // -i for input file
-
-			new_list = input(&agrv[++i]);
-
-		} else if ((strcmp(agrv[i], "-F") == 0) || (strcmp(agrv[i],"--FCFS") == 0)) { // -F for FCFS schduler
-
-			mode = FCFS;
-
-		} else if ((strcmp(agrv[i], "-E") == 0) || (strcmp(agrv[i],"--EXTERNAL") == 0)) { // -F for FCFS schduler
-			
-			mode = EX;			
-	
-		} else if ((strcmp(agrv[i], "-R") == 0) || (strcmp(agrv[i],"--ROUND_ROBIN") == 0)) { // -F for FCFS schduler
-											      
-			mode = RR; 
-											   
-		} else if ((strcmp(agrv[i], "-M") == 0) || (strcmp(agrv[i],"--MEMORY_MANGEMENT") == 0)) { // -F for FCFS schduler
-											      				
-			mode = MM;
-
-		} else {
-
-			printf("%s is not a command", agrv[i]);
-
-		}		
-	}
-	
 	
 	// sim loop	
 	while(processes){
@@ -288,7 +257,7 @@ int main(int agrc, char* agrv[]) {
 			printf("running: %i: %i\n", running.pid, running.elapsed_time);
 		}	
 
-		admit(&new_list, &ready_queue);
+		admit(new_list, &ready_queue);
 			
 		event_complete(&wait_list, &ready_queue);
 
@@ -301,11 +270,86 @@ int main(int agrc, char* agrv[]) {
 		
 
 		dispatch(&ready_queue, &running);
-
 		if (!isNoProcess(&running)) {	
 			running.elapsed_time++;	
 		}
 
 		timer++;			
 	}	
+}
+
+void External() {
+
+	printf("not implemented\n");
+}
+
+void Round_Robin() {
+
+	printf("not implemented\n");
+}
+
+void Memory_Mangement() {
+
+	printf("not implemented\n");
+
+}
+int main(int agrc, char* agrv[]) {
+	
+	//data structures 	
+	Linked_list new_list;	
+
+	// commands
+	if (agrc < 2) {
+		printf("Error: no commands supplied\n");
+		return EXIT_FAILURE;
+	}	
+
+	// setting flags 	
+	for (int i = 1; i < agrc; i++) { 
+		if ((strcmp(agrv[i], "-h") == 0) || (strcmp(agrv[i], "--help") == 0)) {
+		
+			help();
+
+		} else if ((strcmp(agrv[i], "-i") == 0) || (strcmp(agrv[i],"--input") == 0)) {  // -i for input file
+
+			new_list = input(&agrv[++i]);
+
+		} else if ((strcmp(agrv[i], "-F") == 0) || (strcmp(agrv[i],"--FCFS") == 0)) { // -F for FCFS schduler
+
+			mode = FS;
+
+		} else if ((strcmp(agrv[i], "-E") == 0) || (strcmp(agrv[i],"--EXTERNAL") == 0)) { // -F for FCFS schduler
+			
+			mode = EX;			
+	
+		} else if ((strcmp(agrv[i], "-R") == 0) || (strcmp(agrv[i],"--ROUND_ROBIN") == 0)) { // -F for FCFS schduler
+											      
+			mode = RR; 
+											   
+		} else if ((strcmp(agrv[i], "-M") == 0) || (strcmp(agrv[i],"--MEMORY_MANGEMENT") == 0)) { // -F for FCFS schduler
+											      				
+			mode = MM;
+			
+
+		} else {
+
+			printf("%s is not a command", agrv[i]);
+
+		}		
+	}
+	
+	// call mode 
+	switch(mode) {
+		
+		case FS: FCFS(&new_list); 
+			break;
+		case EX: External();
+			break;
+		case RR: Round_Robin();  
+			break;	
+		case MM: Memory_Mangement();
+			 break;
+
+	}
+	
 }
