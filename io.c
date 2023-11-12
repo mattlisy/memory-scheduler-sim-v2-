@@ -47,6 +47,7 @@ Linked_list input(char** file) {
 		new.io_dur = atoi(strtok(NULL, ","));	
 		new.elapsed_time = 0;
 		new.time_waited = 0;
+		new.priority = atoi(strtok(NULL, ","));
 
 		// add process to new
 		insert_before(&new_list, new, 0);

@@ -6,7 +6,7 @@
 #include "FCFS.h" 
 #include "process.h"
 #include "linked_list.h"
-#include "Queue.h"
+#include "priority_Queue.h"
 #include <stdio.h>
 #include "io.h"
 
@@ -16,25 +16,25 @@ extern int processes;
 /*
 	Admits the process in the new state to the ready state
 */
-static void admit(Linked_list* new_list, Queue* ready_queue) {
+static void EX_admit(Linked_list* new_list, priority_Queue* ready_PQueue) {
 	int x;
 	while(sizeof_Linkedlist(*new_list) != 0 && (x = find_arrival_t(new_list, timer)) != -1) {
 
 		Process temp = pop(new_list, x); 	
 		printf("\n ===admit: %i===\n", temp.pid);
 		output(temp.pid, "new", "ready"); 
-		enqueue(ready_queue, temp);	
+		PQ_enqueue(ready_PQueue, temp);	
 	}	
 	return;	
 }
 /*
 	dispatches a process to from ready state to a running state
 */
-static void dispatch(Queue* ready_queue, Process* running) {
-	if (sizeof_Queue(*ready_queue) == 0) {
+static void EX_dispatch(priority_Queue* ready_PQueue, Process* running) {
+	if (sizeof_PQueue(*ready_PQueue) == 0) {
 		return;
 	} else if (isNoProcess(running)){
-		*running = dequeue(ready_queue);
+		*running = PQ_dequeue(ready_PQueue);
 		printf("\n ===dispatch: %i===\n", running->pid);	
 		output(running->pid, "ready", "running");
 
@@ -45,7 +45,7 @@ static void dispatch(Queue* ready_queue, Process* running) {
 	io/system event will occur depending on the process io frequency
 	Transitions the process from running state to a wait state
 */
-static void event(Process* running, Linked_list* wait_list) {
+static void EX_event(Process* running, Linked_list* wait_list) {
 	if (isNoProcess(running)) {
 		return;
 	} else if(running->elapsed_time % running->io_freq == 0) {
@@ -62,7 +62,7 @@ static void event(Process* running, Linked_list* wait_list) {
 	Transitions process from wait state to ready state when
 	io/system event has finished exection
 */
-static void event_complete(Linked_list* wait_list, Queue* ready_queue) {
+static void EX_event_complete(Linked_list* wait_list, priority_Queue* ready_PQueue) {
 
 	if (sizeof_Linkedlist(*wait_list) == 0) {	
 		return;
@@ -75,7 +75,7 @@ static void event_complete(Linked_list* wait_list, Queue* ready_queue) {
 				printf("\n ===event complete: %i===\n", compare_value.pid);
 				Process ready = pop(wait_list, i);
 				ready.time_waited = 0;	
-				enqueue(ready_queue, ready);	
+				PQ_enqueue(ready_PQueue, ready);	
 				i--; // reprocess curr elem; pop shift elems down
 			} else {
 				printf("\nwaiting: %i: %i\n", compare_value.pid, compare_value.time_waited);
@@ -91,7 +91,7 @@ static void event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void terminate(Process* running) {
+static void EX_terminate(Process* running) {
 	if (isNoProcess(running)) {	
 		return;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
@@ -108,7 +108,7 @@ static void terminate(Process* running) {
 */ 
 void External(Linked_list* new_list) {
 
-	Queue ready_queue = create_Queue();
+	priority_Queue ready_PQueue = create_PQueue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
 	
@@ -120,25 +120,25 @@ void External(Linked_list* new_list) {
 			printf("running: %i: %i\n", running.pid, running.elapsed_time);
 		}	
 
-		admit(new_list, &ready_queue);
+		EX_admit(new_list, &ready_PQueue);
 			
-		event_complete(&wait_list, &ready_queue);
+		EX_event_complete(&wait_list, &ready_PQueue);
 
 			
-		terminate(&running);			
+		EX_terminate(&running);			
 
 		
-		event(&running, &wait_list);
+		EX_event(&running, &wait_list);
 		
 
-		dispatch(&ready_queue, &running);
+		EX_dispatch(&ready_PQueue, &running);
 		if (!isNoProcess(&running)) {	
 			running.elapsed_time++;	
 		}
 
 		timer++;			
 	}	
-	destroy_Queue(&ready_queue);
+	destroy_PQueue(&ready_PQueue);
 	destroy_Linkedlist(&wait_list);
 	printf("\n===< Simulation Complete >===\n");
 }

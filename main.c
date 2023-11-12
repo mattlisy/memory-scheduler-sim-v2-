@@ -15,7 +15,7 @@ TODO:
 
 */
 
-
+#include "priority_Queue.h"
 #include "External.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,8 +92,7 @@ void Memory_Mangement() {
 
 }
 int main(int agrc, char* agrv[]) {
-	
-	//data structures 	
+	//data structures 
 	Linked_list new_list;	
 
 	// commands
