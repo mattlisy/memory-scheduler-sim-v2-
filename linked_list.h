@@ -36,4 +36,5 @@ void destroy_Linkedlist(Linked_list* list);
 
 // increment each time_waited member Process in a Linked list
 void incr_time_waited_Linkedlist(Linked_list* list);
+
 #endif

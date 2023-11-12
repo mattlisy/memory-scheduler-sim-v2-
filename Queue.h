@@ -29,7 +29,7 @@ void enqueue(Queue* queue, const Process process);
 void print_Queue(const Queue queue);
 
 // free all nodes from the Queue
-void destory_Queue(Queue* queue);
+void destroy_Queue(Queue* queue);
 
 #endif
 

@@ -1,0 +1,78 @@
+time: 0, pid: 1001, old state: new, new_state: ready
+
+time: 0, pid: 1001, old state: ready, new_state: running
+
+time: 100, pid: 1002, old state: new, new_state: ready
+
+time: 100, pid: 1001, old state: running, new_state: terminated
+
+time: 100, pid: 1002, old state: ready, new_state: running
+
+time: 150, pid: 1002, old state: running, new_state: waiting
+
+time: 250, pid: 1002, old state: waiting, new_state: ready
+
+time: 250, pid: 1002, old state: ready, new_state: running
+
+time: 300, pid: 1002, old state: running, new_state: terminated
+
+time: 400, pid: 1004, old state: new, new_state: ready
+
+time: 400, pid: 1003, old state: new, new_state: ready
+
+time: 400, pid: 1004, old state: ready, new_state: running
+
+time: 410, pid: 1004, old state: running, new_state: waiting
+
+time: 410, pid: 1003, old state: ready, new_state: running
+
+time: 420, pid: 1003, old state: running, new_state: waiting
+
+time: 425, pid: 1004, old state: waiting, new_state: ready
+
+time: 425, pid: 1004, old state: ready, new_state: running
+
+time: 435, pid: 1003, old state: waiting, new_state: ready
+
+time: 435, pid: 1004, old state: running, new_state: waiting
+
+time: 435, pid: 1003, old state: ready, new_state: running
+
+time: 445, pid: 1003, old state: running, new_state: waiting
+
+time: 450, pid: 1004, old state: waiting, new_state: ready
+
+time: 450, pid: 1004, old state: ready, new_state: running
+
+time: 460, pid: 1003, old state: waiting, new_state: ready
+
+time: 460, pid: 1004, old state: running, new_state: waiting
+
+time: 460, pid: 1003, old state: ready, new_state: running
+
+time: 470, pid: 1003, old state: running, new_state: waiting
+
+time: 475, pid: 1004, old state: waiting, new_state: ready
+
+time: 475, pid: 1004, old state: ready, new_state: running
+
+time: 485, pid: 1003, old state: waiting, new_state: ready
+
+time: 485, pid: 1004, old state: running, new_state: waiting
+
+time: 485, pid: 1003, old state: ready, new_state: running
+
+time: 495, pid: 1003, old state: running, new_state: waiting
+
+time: 500, pid: 1004, old state: waiting, new_state: ready
+
+time: 500, pid: 1004, old state: ready, new_state: running
+
+time: 510, pid: 1003, old state: waiting, new_state: ready
+
+time: 510, pid: 1004, old state: running, new_state: terminated
+
+time: 510, pid: 1003, old state: ready, new_state: running
+
+time: 520, pid: 1003, old state: running, new_state: terminated
+

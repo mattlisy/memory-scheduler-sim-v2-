@@ -1,6 +1,9 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <stdbool.h>
+
+#define NO_PROCESS (Process){-1, -1, -1, -1, -1, -1, -1}  // represents a process that does not exist
 // type defintion for Process 
 typedef struct {
 	int pid;
@@ -17,5 +20,7 @@ typedef struct Process_node {
 	Process process;
 	struct Process_node* next;
 } Process_node;
+
+bool isNoProcess(Process* process);
 
 #endif 
