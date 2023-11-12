@@ -16,6 +16,7 @@ TODO:
 */
 
 
+#include "External.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -145,7 +146,7 @@ int main(int agrc, char* agrv[]) {
 		
 		case FS: FCFS(&new_list); 
 			 break;
-		case EX: External();
+		case EX: External(&new_list);
 			 break;
 		case RR: Round_Robin();  
 			 break;	

@@ -10,5 +10,7 @@ bool isNoProcess(Process* process) {
  	        process->totalCPU_t == -1 &&
              	process->io_freq == -1 &&
              	process->io_dur == -1 &&
-            	process->elapsed_time == -1 && process->time_waited == -1);
+            	process->elapsed_time == -1 && 
+		process->time_waited == -1 &&
+		process->time_waited == -1);
 }
