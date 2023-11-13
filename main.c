@@ -134,10 +134,14 @@ int main(int agrc, char* agrv[]) {
 	double throughput = (double)total_processes / (double)timer; 	
 	double avg_turnaround = (double)total_turnaround / (double)total_processes;   
 	char buffer[64];
+	char buffer2[64];
+	printf("\nReport\n");
 	for(int i = 0; i < total_processes; i++) {
-		printf("(pid: %i, wait time: %i) ", processes_data[i].pid, processes_data[i].wait_time);
+		sprintf(buffer2, "(pid: %i, wait time: %i) ", processes_data[i].pid, processes_data[i].wait_time);
+		printf("%s ", buffer2);
 	}
 	
-	sprintf(buffer, "\nReport\n\tthroughput: %f\n\taverage turn around: %f\n", throughput, avg_turnaround);
+	sprintf(buffer, "\n\tthroughput: %f\n\taverage turn around: %f\n", throughput, avg_turnaround);
 	printf("%s", buffer);
+	
 }

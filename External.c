@@ -41,7 +41,9 @@ static void EX_dispatch(priority_Queue* ready_PQueue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
-	incr_wait_time_PQueue(ready_PQueue);
+	if (sizeof_PQueue(*ready_PQueue) != 0) {
+		incr_wait_time_PQueue(ready_PQueue);
+	}
 	return; 
 }
 /*
@@ -94,24 +96,26 @@ static void EX_event_complete(Linked_list* wait_list, priority_Queue* ready_PQue
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void EX_terminate(Process* running) {
+static Process EX_terminate(Process* running) {
+	Process process_data = NO_PROCESS;
 	if (isNoProcess(running)) {	
-		return;
+		return NO_PROCESS;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		output(running->pid, "running", "terminated");	
 		printf("\n ===terminated: %i===\n", running->pid);
 		total_turnaround += timer - running->real_arrival_t;
+		process_data = *running;
 		*running = NO_PROCESS;	
 		processes--;
 	}
-	return;
+	return process_data;
 }
 
 /* 
 	simulate FCFS schduler
 */ 
 void External(Linked_list* new_list, Process processes_data[], int array_size) {
-
+	int count = 0;
 	priority_Queue ready_PQueue = create_PQueue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
@@ -129,8 +133,10 @@ void External(Linked_list* new_list, Process processes_data[], int array_size) {
 		EX_event_complete(&wait_list, &ready_PQueue);
 
 			
-		EX_terminate(&running);			
-
+		Process get = EX_terminate(&running);			
+		if (!isNoProcess(&get) && count < array_size){
+			processes_data[count++] = get;
+		}
 		
 		EX_event(&running, &wait_list);
 		

@@ -43,7 +43,9 @@ static void RR_dispatch(Queue* ready_queue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
-	incr_wait_time_Queue(ready_queue);
+	if (sizeof_Queue(*ready_queue) != 0){ 
+		incr_wait_time_Queue(ready_queue);
+	}
 	return; 
 }
 /*
@@ -96,17 +98,19 @@ static void RR_event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void RR_terminate(Process* running) {
-	if (isNoProcess(running)) {	
-		return;
+static Process RR_terminate(Process* running) {
+	Process process_data = NO_PROCESS;
+	if (isNoProcess(running)) {
+             return NO_PROCESS;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
-		output(running->pid, "running", "terminated");	
-		printf("\n ===terminated: %i===\n", running->pid);
-		total_turnaround += timer - running->real_arrival_t;
-		*running = NO_PROCESS;	
-		processes--;
+		output(running->pid, "running", "terminated");
+                printf("\n ===terminated: %i===\n", running->pid);
+                total_turnaround += timer - running->real_arrival_t;
+             	process_data = *running;
+                *running = NO_PROCESS;
+	        processes--;
 	}
-	return;
+	return process_data;
 }
 
 static void RR_interrupt(Process* running, Queue* ready_queue) {
@@ -127,8 +131,8 @@ static void RR_interrupt(Process* running, Queue* ready_queue) {
 /* 
 	simulate RR schduler
 */ 
-void Round_Robin(Linked_list* new_list, Process processes_data, int array_size) {
-
+void Round_Robin(Linked_list* new_list, Process processes_data[], int array_size) {
+	int count = 0;
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
@@ -146,8 +150,10 @@ void Round_Robin(Linked_list* new_list, Process processes_data, int array_size) 
 		RR_event_complete(&wait_list, &ready_queue);
 
 				
-		RR_terminate(&running);			
-
+		Process get = RR_terminate(&running);			
+		if (!isNoProcess(&get) && count < array_size){
+			 processes_data[count++] = get;
+		}
 			
 		RR_event(&running, &wait_list);
 		

@@ -67,7 +67,9 @@ static void MM_dispatch(Queue* ready_queue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
-	incr_wait_time_Queue(ready_queue);
+	if (sizeof_Queue(*ready_queue) != 0) {
+		incr_wait_time_Queue(ready_queue);
+	}
 	return; 
 }
 /*
@@ -120,9 +122,10 @@ static void MM_event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void MM_terminate(Process* running, Memory memory) {
+static Process MM_terminate(Process* running, Memory memory) {
+	Process process_data = NO_PROCESS;
 	if (isNoProcess(running)) {	
-		return;
+		return NO_PROCESS;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		//release memory 
 		memory[running->memory_seg].available = 0; 
@@ -132,10 +135,11 @@ static void MM_terminate(Process* running, Memory memory) {
 		sprintf(buffer, "terminated\n\n\tfreed memory segment: %i, size of segment: %i\n\ttotal usable memory: %i\n\tmemory segments: [%s|%s|%s|%s]\n", running->memory_seg, memory[running->memory_seg].size, total_available_memory, MAVAIL(memory[0].available), MAVAIL(memory[1].available), MAVAIL(memory[2].available), MAVAIL(memory[3].available));
 		output(running->pid, "running", buffer);	
 		printf("\n ===terminated: %i===\n", running->pid);
+		process_data = *running;
 		*running = NO_PROCESS;	
 		processes--;
 	}
-	return;
+	return process_data;
 }
 
 int compareSegments(const void* a, const void* b) {
@@ -165,7 +169,7 @@ void add_memory_segs(Memory memory, int seg_a, int seg_b, int seg_c, int seg_d) 
 	simulate FCFS schduler
 */ 
 void Memory_Mangement(Linked_list* new_list, Memory memory, Process processes_data[], int array_size) {
-
+	int count = 0;
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
@@ -183,7 +187,10 @@ void Memory_Mangement(Linked_list* new_list, Memory memory, Process processes_da
 		MM_event_complete(&wait_list, &ready_queue);
 
 			
-		MM_terminate(&running, memory);			
+		Process get = MM_terminate(&running, memory);			
+		if (!isNoProcess(&get) && count < array_size){
+			processes_data[count++] = get;
+		}
 
 		
 		MM_event(&running, &wait_list);

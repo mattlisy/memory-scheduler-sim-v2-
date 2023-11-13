@@ -108,5 +108,6 @@ void incr_wait_time_PQueue(priority_Queue* pQ) {
  	assert(pQ->size != 0);
  	for(Process_node* temp = pQ->head; temp != NULL; temp = temp->next) {
 		temp->process.wait_time++;
+		printf("\nready: %i: %i\n", temp->process.pid, temp->process.wait_time);
 	}                 
 }   
