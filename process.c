@@ -13,6 +13,6 @@ bool isNoProcess(Process* process) {
             	process->elapsed_time == -1 && 
 		process->time_waited == -1 &&
 		process->priority == -1 &&
-		process->memory_req == -1 &&
+		process->memory_seg == -1 &&
 		process->memory_req == -1);
 }

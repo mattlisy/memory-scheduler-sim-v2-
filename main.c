@@ -113,14 +113,10 @@ int main(int agrc, char* agrv[]) {
 
 		}		
 	}
-
-	//test
-	
-	printf("%i, %i, %i, %i\n", memory[0].size, memory[1].size, memory[2].size, memory[3].size);
-		
+			
 	// check input file 
 	if (sizeof_Linkedlist(new_list) == 0) {
-		printf("\ninput file error\n");
+		printf("Error: no input file\n");
 		return EXIT_FAILURE;
 	} 		
 

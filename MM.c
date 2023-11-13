@@ -26,13 +26,13 @@ static int check_available_memory(Process process, const Memory memory) {
 /*
 	Admits the process in the new state to the ready state
 */
-static void MM_admit(Linked_list* new_list, Queue* ready_queue, Memory* memory) {
+static void MM_admit(Linked_list* new_list, Queue* ready_queue, Memory memory) {
 	int x;
 	while(sizeof_Linkedlist(*new_list) != 0 && (x = find_arrival_t(new_list, timer)) != -1) {
 		
-		int seg_num = check_available_memory(peek(new_list), *memory);	 
+		int seg_num = check_available_memory(get(new_list, x), memory);	 
 		if(seg_num == -1) {
-			return
+			return;
 		} else {
 			Process temp = pop(new_list, x); 		
 			temp.memory_seg = seg_num;	
@@ -108,7 +108,7 @@ static void MM_event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void MM_terminate(Process* running, Memory* memory) {
+static void MM_terminate(Process* running, Memory memory) {
 	if (isNoProcess(running)) {	
 		return;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
@@ -168,7 +168,7 @@ void Memory_Mangement(Linked_list* new_list, Memory memory) {
 		MM_event_complete(&wait_list, &ready_queue);
 
 			
-		MM_terminate(&running);			
+		MM_terminate(&running, memory);			
 
 		
 		MM_event(&running, &wait_list);
