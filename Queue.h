@@ -31,5 +31,8 @@ void print_Queue(const Queue queue);
 // free all nodes from the Queue
 void destroy_Queue(Queue* queue);
 
+//incr wait_time for report 
+void incr_wait_time_Queue(Queue* queue);
+
 #endif
 

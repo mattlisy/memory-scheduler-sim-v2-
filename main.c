@@ -36,6 +36,7 @@ enum modes {
 int mode = FS; // default mode = FCFS  
 int timer = START_TIME;
 int processes = 0;
+int total_turnaround = 0;
 
 /*
 CLI FLAGS 
@@ -112,19 +113,31 @@ int main(int agrc, char* agrv[]) {
 		printf("Error: no input file\n");
 		return EXIT_FAILURE;
 	} 		
-
+	// save max processes before sim 
+	int total_processes = processes;	
+	Process processes_data[total_processes];
 	// call mode 
 	switch(mode) {
 		
-		case FS: FCFS(&new_list); 
+		case FS: FCFS(&new_list, processes_data, total_processes); 
 			 break;
-		case EX: External(&new_list);
+		case EX: External(&new_list, processes_data, total_processes);
 			 break;
-		case RR: Round_Robin(&new_list);  
+		case RR: Round_Robin(&new_list, processes_data, total_processes);  
 			 break;	
-		case MM: Memory_Mangement(&new_list, memory);
+		case MM: Memory_Mangement(&new_list, memory, processes_data, total_processes);
 			 break;
 
 	}
+	timer--; // final loop checks processes must represent data properly
+	// report of sim
+	double throughput = (double)total_processes / (double)timer; 	
+	double avg_turnaround = (double)total_turnaround / (double)total_processes;   
+	char buffer[64];
+	for(int i = 0; i < total_processes; i++) {
+		printf("(pid: %i, wait time: %i) ", processes_data[i].pid, processes_data[i].wait_time);
+	}
 	
+	sprintf(buffer, "\nReport\n\tthroughput: %f\n\taverage turn around: %f\n", throughput, avg_turnaround);
+	printf("%s", buffer);
 }

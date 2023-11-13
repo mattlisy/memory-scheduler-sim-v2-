@@ -86,3 +86,13 @@ void destroy_Queue(Queue* queue) {
 	queue->tail = NULL;
 }
 
+//increments wait time for report
+void incr_wait_time_Queue(Queue* queue) {
+	assert(queue != NULL);	
+	assert(queue->size != 0);
+	for(Process_node* temp = queue->head; temp != NULL; temp = temp->next) {
+		temp->process.wait_time++;
+		printf("\nready: %i: %i\n", temp->process.pid, temp->process.wait_time);
+	}
+
+}

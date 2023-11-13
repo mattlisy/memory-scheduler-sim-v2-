@@ -7,6 +7,6 @@
 /*
 	implementation of FCFS schedeuler algorithm  
 */
-void FCFS(Linked_list* new_list);
+void FCFS(Linked_list* new_list, Process wait_time_data[], int array_size);
 
 #endif 

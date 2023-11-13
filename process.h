@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define NO_PROCESS (Process){-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}  // represents a process that does not exist
+#define NO_PROCESS (Process){-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1}  // represents a process that does not exist
 // type defintion for Process 
 typedef struct {
 	int pid; 
@@ -16,6 +16,9 @@ typedef struct {
 	int priority;
 	int memory_req;
 	int memory_seg;
+	int real_arrival_t;
+	int wait_time;
+;
 } Process;
 
 // type defintion for Process_node to be used in data structures

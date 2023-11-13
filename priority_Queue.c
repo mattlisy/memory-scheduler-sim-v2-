@@ -102,3 +102,11 @@ void destroy_PQueue(priority_Queue* pQ) {
 	pQ->tail = NULL;
 }
 
+// increments wait time for report 
+void incr_wait_time_PQueue(priority_Queue* pQ) {
+	assert(pQ != NULL);
+ 	assert(pQ->size != 0);
+ 	for(Process_node* temp = pQ->head; temp != NULL; temp = temp->next) {
+		temp->process.wait_time++;
+	}                 
+}   

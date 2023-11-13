@@ -50,8 +50,8 @@ Linked_list input(char** file) {
 		new.priority = atoi(strtok(NULL, ","));
 		new.memory_req = atoi(strtok(NULL, ","));
 		new.memory_seg = 0;
-
-
+		new.real_arrival_t = 0;
+		new.wait_time = 0;
 		// add process to new
 		insert_before(&new_list, new, 0);
 		processes++;	

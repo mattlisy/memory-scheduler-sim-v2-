@@ -12,6 +12,7 @@
 
 extern int timer; 
 extern int processes;
+extern int total_turnaround;
 
 /*
 	Admits the process in the new state to the ready state
@@ -23,6 +24,7 @@ static void EX_admit(Linked_list* new_list, priority_Queue* ready_PQueue) {
 		Process temp = pop(new_list, x); 	
 		printf("\n ===admit: %i===\n", temp.pid);
 		output(temp.pid, "new", "ready"); 
+		temp.real_arrival_t = timer;
 		PQ_enqueue(ready_PQueue, temp);	
 	}	
 	return;	
@@ -39,6 +41,7 @@ static void EX_dispatch(priority_Queue* ready_PQueue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
+	incr_wait_time_PQueue(ready_PQueue);
 	return; 
 }
 /*
@@ -97,6 +100,7 @@ static void EX_terminate(Process* running) {
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		output(running->pid, "running", "terminated");	
 		printf("\n ===terminated: %i===\n", running->pid);
+		total_turnaround += timer - running->real_arrival_t;
 		*running = NO_PROCESS;	
 		processes--;
 	}
@@ -106,7 +110,7 @@ static void EX_terminate(Process* running) {
 /* 
 	simulate FCFS schduler
 */ 
-void External(Linked_list* new_list) {
+void External(Linked_list* new_list, Process processes_data[], int array_size) {
 
 	priority_Queue ready_PQueue = create_PQueue();
 	Process running = NO_PROCESS;

@@ -12,10 +12,13 @@
 #include "io.h"
 #include <stdlib.h>
 
+#define MAVAIL(x) (x ? "X" : "O") 
+
+extern int total_turnaround;
 extern int timer; 
 extern int processes;
 
-int total_free_memory = 0;
+int total_available_memory = 0;
 
 static int check_available_memory(Process process, const Memory memory) {
 	for(int i = 0; i < 4; i++) {
@@ -38,10 +41,15 @@ static void MM_admit(Linked_list* new_list, Queue* ready_queue, Memory memory) {
 			return;
 		} else {
 			Process temp = pop(new_list, x); 		
+			temp.real_arrival_t = timer;
 			temp.memory_seg = seg_num;	
 			memory[seg_num].available = 1;
+			total_available_memory -= memory[seg_num].size;
+			char buffer[256];
+			sprintf(buffer, "ready\n\n\tusing memory segment: %i, size of segment: %i, free memory: %i\n\ttotal usable memory: %i\n\tmemory segments: [%s|%s|%s|%s]\n", temp.memory_seg, memory[temp.memory_seg].size, memory[temp.memory_seg].size - temp.memory_req, total_available_memory, MAVAIL(memory[0].available), MAVAIL(memory[1].available), MAVAIL(memory[2].available), MAVAIL(memory[3].available));
+	
 			printf("\n ===admit: %i===\n", temp.pid);
-			output(temp.pid, "new", "ready"); 
+			output(temp.pid, "new", buffer); 
 			enqueue(ready_queue, temp);	
 		}
 	}	
@@ -59,6 +67,7 @@ static void MM_dispatch(Queue* ready_queue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
+	incr_wait_time_Queue(ready_queue);
 	return; 
 }
 /*
@@ -117,10 +126,11 @@ static void MM_terminate(Process* running, Memory memory) {
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		//release memory 
 		memory[running->memory_seg].available = 0; 
-		total_free_memory += memory[running->memory_seg].size;
-		char buffer[128];
-		sprintf(buffer, "terminate\n\n\tfreed memory segment: %i, size: \n\ttotal free memory: ", running->memory_seg, memory[running->memory_seg].size);
-		output(running->pid, "running", terminated);	
+		total_available_memory += memory[running->memory_seg].size;
+		total_turnaround += timer - running->real_arrival_t;
+		char buffer[256];
+		sprintf(buffer, "terminated\n\n\tfreed memory segment: %i, size of segment: %i\n\ttotal usable memory: %i\n\tmemory segments: [%s|%s|%s|%s]\n", running->memory_seg, memory[running->memory_seg].size, total_available_memory, MAVAIL(memory[0].available), MAVAIL(memory[1].available), MAVAIL(memory[2].available), MAVAIL(memory[3].available));
+		output(running->pid, "running", buffer);	
 		printf("\n ===terminated: %i===\n", running->pid);
 		*running = NO_PROCESS;	
 		processes--;
@@ -137,8 +147,8 @@ int compareSegments(const void* a, const void* b) {
 }	
 
 void add_memory_segs(Memory memory, int seg_a, int seg_b, int seg_c, int seg_d) {
-	total_free_memory = seg_a + seg_b + seg_c + seg_d;	
-	if (total_free_memory > 1000) {
+	total_available_memory = seg_a + seg_b + seg_c + seg_d;	
+	if (total_available_memory > 1000) {
 		printf("Error: segments over 1GB\n");
 		exit(1);
 	}
@@ -154,7 +164,7 @@ void add_memory_segs(Memory memory, int seg_a, int seg_b, int seg_c, int seg_d) 
 /* 
 	simulate FCFS schduler
 */ 
-void Memory_Mangement(Linked_list* new_list, Memory memory) {
+void Memory_Mangement(Linked_list* new_list, Memory memory, Process processes_data[], int array_size) {
 
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;
@@ -188,5 +198,6 @@ void Memory_Mangement(Linked_list* new_list, Memory memory) {
 	}	
 	destroy_Queue(&ready_queue);
 	destroy_Linkedlist(&wait_list);
-	printf("\n===< Simulation Complete >===\n");
+	printf("\n===< Simulation Complete >===\n");	
+
 }

@@ -11,6 +11,8 @@
 #include "io.h"
 
 #define INTERRUPT_TIME 1000 // 1s 
+
+extern int total_turnaround;
 extern int timer; 
 extern int processes;
 
@@ -24,6 +26,7 @@ static void RR_admit(Linked_list* new_list, Queue* ready_queue) {
 		Process temp = pop(new_list, x); 	
 		printf("\n ===admit: %i===\n", temp.pid);
 		output(temp.pid, "new", "ready"); 
+		temp.real_arrival_t = timer;
 		enqueue(ready_queue, temp);	
 	}	
 	return;	
@@ -40,6 +43,7 @@ static void RR_dispatch(Queue* ready_queue, Process* running) {
 		output(running->pid, "ready", "running");
 
 	}
+	incr_wait_time_Queue(ready_queue);
 	return; 
 }
 /*
@@ -98,6 +102,7 @@ static void RR_terminate(Process* running) {
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		output(running->pid, "running", "terminated");	
 		printf("\n ===terminated: %i===\n", running->pid);
+		total_turnaround += timer - running->real_arrival_t;
 		*running = NO_PROCESS;	
 		processes--;
 	}
@@ -122,7 +127,7 @@ static void RR_interrupt(Process* running, Queue* ready_queue) {
 /* 
 	simulate RR schduler
 */ 
-void Round_Robin(Linked_list* new_list) {
+void Round_Robin(Linked_list* new_list, Process processes_data, int array_size) {
 
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;

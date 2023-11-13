@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "io.h"
 
+extern int total_turnaround;
 extern int timer; 
 extern int processes;
 
@@ -23,6 +24,7 @@ static void admit(Linked_list* new_list, Queue* ready_queue) {
 		Process temp = pop(new_list, x); 	
 		printf("\n ===admit: %i===\n", temp.pid);
 		output(temp.pid, "new", "ready"); 
+		temp.real_arrival_t = timer;
 		enqueue(ready_queue, temp);	
 	}	
 	return;	
@@ -37,7 +39,9 @@ static void dispatch(Queue* ready_queue, Process* running) {
 		*running = dequeue(ready_queue);
 		printf("\n ===dispatch: %i===\n", running->pid);	
 		output(running->pid, "ready", "running");
-
+	} 
+	if (sizeof_Queue(*ready_queue) != 0) {
+		incr_wait_time_Queue(ready_queue);
 	}
 	return; 
 }
@@ -91,23 +95,26 @@ static void event_complete(Linked_list* wait_list, Queue* ready_queue) {
 	Terminates a process when program is complete
 	Transitions the process from a running state to a terminate state
 */ 
-static void terminate(Process* running) {
+Process terminate(Process* running) {
+	Process process_data = NO_PROCESS; 
 	if (isNoProcess(running)) {	
-		return;
+		return NO_PROCESS;
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		output(running->pid, "running", "terminated");	
 		printf("\n ===terminated: %i===\n", running->pid);
+		total_turnaround += timer - running->real_arrival_t;
+		process_data = *running;
 		*running = NO_PROCESS;	
 		processes--;
 	}
-	return;
+	return process_data;
 }
 
 /* 
 	simulate FCFS schduler
 */ 
-void FCFS(Linked_list* new_list) {
-
+void FCFS(Linked_list* new_list, Process processes_data[], int array_size) {	
+	int count = 0;
 	Queue ready_queue = create_Queue();
 	Process running = NO_PROCESS;
 	Linked_list wait_list = create_Linkedlist();		
@@ -125,7 +132,10 @@ void FCFS(Linked_list* new_list) {
 		event_complete(&wait_list, &ready_queue);
 
 			
-		terminate(&running);			
+		Process get = terminate(&running);			
+		if (!isNoProcess(&get) && count < array_size){
+			processes_data[count++] = get;
+		} 
 
 		
 		event(&running, &wait_list);

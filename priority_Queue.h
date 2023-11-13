@@ -32,5 +32,7 @@ void print_PQueue(const priority_Queue pQ);
 // free all nodes from the priority Queue
 void destroy_PQueue(priority_Queue* pQ);
 
+//increment wait time for report
+void incr_wait_time_PQueue(priority_Queue* pQ);
 #endif
 

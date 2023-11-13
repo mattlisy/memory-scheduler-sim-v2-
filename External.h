@@ -7,6 +7,6 @@
 /*
 	implementation an external schedeuler algorithm without preemption
 */
-void External(Linked_list* new_list);
+void External(Linked_list* new_list, Process processes_data[], int array_size);
 
 #endif 
