@@ -7,7 +7,7 @@ TODO:
 
 	x implement FCFS non-preemption test with 
 		x file organization
-	- implement external priorities no premption scheduler 
+	X implement external priorities no premption scheduler 
 	- implement round robin with 1s timeout 
 
 	* PART 2 *
@@ -15,6 +15,8 @@ TODO:
 
 */
 
+#include "MM.h"
+#include "RR.h"
 #include "priority_Queue.h"
 #include "External.h"
 #include <stdio.h>
@@ -62,39 +64,11 @@ void help(void) {
 }
 
 
-/*	-> RR 
 
-void interrupt(Process* running, Queue* ready_queue) {
-	if (isNoProcess(running)) {
-		return;
-	}else if (running->elapsed_time % INTERRUPT_FREQ == 0) {
-		Output(running->pid, "ready", "interrupt");
-		printf("\n===interrupt: %i===\n", running->pid);
-		enqueue(ready_queue, *running);
-		*running = NO_PROCESS;
-	}
-	
-	return;
-
-}	
-
-*/
-
-
-void Round_Robin() {
-
-	printf("not implemented\n");
-}
-
-void Memory_Mangement() {
-
-	printf("not implemented\n");
-
-}
 int main(int agrc, char* agrv[]) {
 	//data structures 
 	Linked_list new_list;	
-
+	Memory memory;
 	// commands
 	if (agrc < 2) {
 		printf("Error: no commands supplied\n");
@@ -126,20 +100,30 @@ int main(int agrc, char* agrv[]) {
 											   
 		} else if ((strcmp(agrv[i], "-M") == 0) || (strcmp(agrv[i],"--MEMORY_MANGEMENT") == 0)) { // -F for FCFS schduler
 											      				
+			if (i + 4 > agrc) {
+				printf("Error: not enough arguments\n");
+				exit(1);
+			}
 			mode = MM;
-			
-
+			add_memory_segs(memory, atoi(agrv[i+1]), atoi(agrv[i+2]), atoi(agrv[i+3]), atoi(agrv[i+4]));	
+			i += 4;
 		} else {
 			printf("\n%s is not a command\n", agrv[i]);
 			return EXIT_FAILURE;
 
 		}		
 	}
+
+	//test
+	
+	printf("%i, %i, %i, %i\n", memory[0].size, memory[1].size, memory[2].size, memory[3].size);
 		
+	// check input file 
 	if (sizeof_Linkedlist(new_list) == 0) {
 		printf("\ninput file error\n");
 		return EXIT_FAILURE;
 	} 		
+
 	// call mode 
 	switch(mode) {
 		
@@ -147,9 +131,9 @@ int main(int agrc, char* agrv[]) {
 			 break;
 		case EX: External(&new_list);
 			 break;
-		case RR: Round_Robin();  
+		case RR: Round_Robin(&new_list);  
 			 break;	
-		case MM: Memory_Mangement();
+		case MM: Memory_Mangement(&new_list, memory);
 			 break;
 
 	}
