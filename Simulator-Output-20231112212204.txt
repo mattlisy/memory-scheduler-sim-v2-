@@ -1,0 +1,54 @@
+time: 0, pid: 1, old state: new, new_state: ready
+
+time: 0, pid: 1, old state: ready, new_state: running
+
+time: 2, pid: 2, old state: new, new_state: ready
+
+time: 2, pid: 1, old state: running, new_state: waiting
+
+time: 2, pid: 2, old state: ready, new_state: running
+
+time: 5, pid: 1, old state: waiting, new_state: ready
+
+time: 5, pid: 2, old state: running, new_state: waiting
+
+time: 5, pid: 1, old state: ready, new_state: running
+
+time: 6, pid: 2, old state: waiting, new_state: ready
+
+time: 7, pid: 1, old state: running, new_state: waiting
+
+time: 7, pid: 2, old state: ready, new_state: running
+
+time: 8, pid: 2, old state: running, new_state: terminate
+
+	freed memory segment: 3
+
+time: 9, pid: 3, old state: new, new_state: ready
+
+time: 9, pid: 3, old state: ready, new_state: running
+
+time: 10, pid: 1, old state: waiting, new_state: ready
+
+time: 10, pid: 3, old state: running, new_state: waiting
+
+time: 10, pid: 1, old state: ready, new_state: running
+
+time: 12, pid: 1, old state: running, new_state: waiting
+
+time: 13, pid: 3, old state: waiting, new_state: ready
+
+time: 13, pid: 3, old state: ready, new_state: running
+
+time: 14, pid: 3, old state: running, new_state: terminate
+
+	freed memory segment: 3
+
+time: 15, pid: 1, old state: waiting, new_state: ready
+
+time: 15, pid: 1, old state: ready, new_state: running
+
+time: 16, pid: 1, old state: running, new_state: terminate
+
+	freed memory segment: 2
+

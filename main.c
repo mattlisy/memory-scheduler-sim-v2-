@@ -3,16 +3,9 @@ Matthew Lisy 101231092
 Kyle Taticek 101193550
 
 TODO:
-	* PART 1 *
-
-	x implement FCFS non-preemption test with 
-		x file organization
-	X implement external priorities no premption scheduler 
-	- implement round robin with 1s timeout 
-
-	* PART 2 *
-	- add memory dependencies 1GB with 4 partitions -> partition will vary in size 
-
+	- add more output
+	- add system metrics 	
+	- testing 
 */
 
 #include "MM.h"

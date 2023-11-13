@@ -39,7 +39,6 @@ Linked_list input(char** file) {
 		}
 		Process new;	
 
-		printf("Okay");
 		// fill new process 	
 		new.pid = atoi(strtok(buffer, ","));
 		new.arrival_t = atoi(strtok(NULL, ","));
@@ -48,7 +47,6 @@ Linked_list input(char** file) {
 		new.io_dur = atoi(strtok(NULL, ","));	
 		new.elapsed_time = 0;
 		new.time_waited = 0;
-		printf("Okay");
 		new.priority = atoi(strtok(NULL, ","));
 		new.memory_req = atoi(strtok(NULL, ","));
 		new.memory_seg = 0;

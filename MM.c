@@ -2,6 +2,7 @@
 	implementation of FCFS schduler algorithm with memory
 
 */
+
 #include "MM.h"
 #include "FCFS.h" 
 #include "process.h"
@@ -13,6 +14,8 @@
 
 extern int timer; 
 extern int processes;
+
+int total_free_memory = 0;
 
 static int check_available_memory(Process process, const Memory memory) {
 	for(int i = 0; i < 4; i++) {
@@ -114,8 +117,10 @@ static void MM_terminate(Process* running, Memory memory) {
 	} else if (running->elapsed_time >= running->totalCPU_t) {
 		//release memory 
 		memory[running->memory_seg].available = 0; 
-
-		output(running->pid, "running", "terminated");	
+		total_free_memory += memory[running->memory_seg].size;
+		char buffer[128];
+		sprintf(buffer, "terminate\n\n\tfreed memory segment: %i, size: \n\ttotal free memory: ", running->memory_seg, memory[running->memory_seg].size);
+		output(running->pid, "running", terminated);	
 		printf("\n ===terminated: %i===\n", running->pid);
 		*running = NO_PROCESS;	
 		processes--;
@@ -132,8 +137,8 @@ int compareSegments(const void* a, const void* b) {
 }	
 
 void add_memory_segs(Memory memory, int seg_a, int seg_b, int seg_c, int seg_d) {
-		
-	if (seg_a + seg_b + seg_c + seg_d > 1000) {
+	total_free_memory = seg_a + seg_b + seg_c + seg_d;	
+	if (total_free_memory > 1000) {
 		printf("Error: segments over 1GB\n");
 		exit(1);
 	}

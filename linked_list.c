@@ -76,7 +76,7 @@ int find_arrival_t(const Linked_list* list, const int compare_value) {
 	int i;
 	Process_node* temp; 
 	for (i = 0, temp = list->head; temp != NULL; i++, temp = temp->next) {
-		if (temp->process.arrival_t == compare_value) {
+		if (temp->process.arrival_t <= compare_value) {
 			return i;
 		}
 	}
